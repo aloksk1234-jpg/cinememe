@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Custom scrollbar hiding utilities */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Custom scroll snap styling */
+.snap-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.snap-item {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Premium glassmorphism effects */
+.glass-panel {
+  background: rgba(15, 15, 15, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.glass-button:active {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(1px);
+}
+
+/* Custom transitions and scroll behaviors */
+html, body {
+  background-color: #09090b; /* Tailwind zinc-950 */
+  color: #f4f4f5; /* Tailwind zinc-100 */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Subtle pulse border animation for download progress */
+@keyframes borderPulse {
+  0%, 100% { border-color: rgba(147, 51, 234, 0.3); }
+  50% { border-color: rgba(147, 51, 234, 0.8); }
+}
+
+.pulsing-border {
+  animation: borderPulse 2s infinite;
+}
