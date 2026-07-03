@@ -10,21 +10,32 @@ interface Toast {
   type: 'success' | 'info' | 'error';
 }
 
+// Helper to shuffle array (Fisher-Yates)
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMuted, setIsMuted] = useState(true); // Default muted to comply with browser autoplay policies
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [randomizedMemes] = useState(() => shuffleArray(mockMemes));
 
   // Filter memes based on search query
   const filteredMemes = useMemo(() => {
-    return mockMemes.filter(meme => {
+    return randomizedMemes.filter(meme => {
       return (
         meme.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         meme.movieName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         meme.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     });
-  }, [searchQuery]);
+  }, [searchQuery, randomizedMemes]);
 
   // Toast Handler
   const showToast = (message: string, type: 'success' | 'info' | 'error' = 'info') => {
