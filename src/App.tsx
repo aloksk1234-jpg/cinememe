@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Search, CheckCircle2, AlertCircle, Info, Heart, Smartphone, X, Share, PlusSquare } from 'lucide-react';
+import { Search, CheckCircle2, AlertCircle, Info, Heart, X, Share, PlusSquare, Download } from 'lucide-react';
 import { mockMemes } from './data/memes';
 import { VideoGrid } from './components/VideoGrid';
 import DonationPopup from './components/DonationPopup';
@@ -124,16 +124,15 @@ function App() {
             {showInstallBtn && (
               <button 
                 onClick={handleInstallClick}
-                className="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-black text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full cursor-pointer flex items-center gap-1 shadow-md active:scale-95 transition-all mr-1.5"
-                title="Install App"
+                className="text-zinc-400 hover:text-amber-400 transition-colors duration-200 cursor-pointer p-0.5 active:scale-90"
+                title="Add to Phone"
               >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>Add to Phone</span>
+                <Download className="w-[21px] h-[21px]" />
               </button>
             )}
             
-            {/* Social Icons (Hidden on Mobile Header to prevent overlapping logo) */}
-            <div className="hidden sm:flex items-center gap-3.5">
+            {/* Social Icons (Visible on both phone and desktop) */}
+            <div className="flex items-center gap-3.5">
               <a 
                 href="https://github.com/aloksk1234-jpg" 
                 target="_blank" 
