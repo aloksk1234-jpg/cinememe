@@ -192,9 +192,22 @@ export const VideoCard: React.FC<VideoCardProps> = ({
       setDownloadProgress(null);
       showToast("Download completed!", "success");
     } catch (error) {
-      console.error("Download failed:", error);
+      console.warn("CORS/Fetch download failed. Using direct download fallback...", error);
       setDownloadProgress(null);
-      showToast("Download failed. CORS block or network issue.", "error");
+      
+      // Fallback: Open video stream directly in a new tab with download instructions or trigger browser native download
+      showToast("Redirecting to video file for direct download...", "info");
+      
+      setTimeout(() => {
+        const fallbackLink = document.createElement('a');
+        fallbackLink.href = videoUrl;
+        fallbackLink.target = '_blank';
+        fallbackLink.rel = 'noopener noreferrer';
+        fallbackLink.download = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.mp4`;
+        document.body.appendChild(fallbackLink);
+        fallbackLink.click();
+        document.body.removeChild(fallbackLink);
+      }, 300);
     }
   };
 
@@ -223,18 +236,37 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         });
         showToast("Shared successfully!", "success");
       } else {
-        // Fallback for Desktop or unsupported devices
-        showToast(
-          "Direct file sharing is only supported on mobile devices. Please use the Download button instead.",
-          "error"
-        );
+        // Fallback for Desktop or unsupported devices: share link instead of file
+        if (navigator.share) {
+          await navigator.share({
+            title: title,
+            text: `Check out this meme from "${movieName}": "${title}"\n${videoUrl}`
+          });
+          showToast("Shared via link successfully!", "success");
+        } else {
+          await navigator.clipboard.writeText(videoUrl);
+          showToast("Meme link copied to clipboard!", "success");
+        }
       }
     } catch (error) {
-      console.error("File sharing failed:", error);
-      showToast(
-        "Direct file sharing is only supported on mobile devices. Please use the Download button instead.",
-        "error"
-      );
+      console.warn("File sharing failed, falling back to link sharing:", error);
+      
+      // Fallback: share link instead of file
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: title,
+            text: `Check out this meme from "${movieName}": "${title}"\n${videoUrl}`
+          });
+          showToast("Shared via link successfully!", "success");
+        } else {
+          await navigator.clipboard.writeText(videoUrl);
+          showToast("Meme link copied to clipboard!", "success");
+        }
+      } catch (err) {
+        console.error("Link sharing fallback failed:", err);
+        showToast("Sharing failed.", "error");
+      }
     } finally {
       setIsSharing(false);
     }
