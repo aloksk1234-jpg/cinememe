@@ -323,7 +323,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         />
 
         {/* Buffering/Loading Indicator */}
-        {isBuffering && (
+        {isPlaying && isBuffering && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs">
             <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
           </div>
