@@ -1,9 +1,8 @@
-import { useState, useMemo } from 'react';
-import { Search, CheckCircle2, AlertCircle, Info, Heart } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Search, CheckCircle2, AlertCircle, Info, Heart, Smartphone, X, Share, PlusSquare } from 'lucide-react';
 import { mockMemes } from './data/memes';
 import { VideoGrid } from './components/VideoGrid';
 import DonationPopup from './components/DonationPopup';
-import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
 interface Toast {
   id: string;
@@ -26,6 +25,58 @@ function App() {
   const [isMuted, setIsMuted] = useState(true); // Default muted to comply with browser autoplay policies
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [randomizedMemes] = useState(() => shuffleArray(mockMemes));
+
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showIOSGuide, setShowIOSGuide] = useState(false);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
+
+  useEffect(() => {
+    // 1. Check if already installed / running in Standalone mode
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+      || (window.navigator as any).standalone === true;
+    
+    if (isStandalone) return;
+
+    // 2. Identify Platform
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const iosDevice = /iphone|ipad|ipod/.test(userAgent);
+    const androidDevice = /android/.test(userAgent);
+    const isMobile = iosDevice || androidDevice || (window.innerWidth < 768);
+
+    // Only show install option on mobile devices
+    if (!isMobile) return;
+
+    setIsIOS(iosDevice);
+    setShowInstallBtn(true);
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (isIOS) {
+      setShowIOSGuide(true);
+    } else if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallBtn(false);
+      }
+      setDeferredPrompt(null);
+    } else {
+      setShowIOSGuide(true);
+    }
+  };
 
   // Filter memes based on search query
   const filteredMemes = useMemo(() => {
@@ -68,8 +119,18 @@ function App() {
             </h1>
           </div>
 
-          {/* Social Icons */}
+          {/* Social Icons & Actions */}
           <div className="flex items-center gap-3.5">
+            {showInstallBtn && (
+              <button 
+                onClick={handleInstallClick}
+                className="bg-amber-500 hover:bg-amber-400 text-neutral-950 font-black text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full cursor-pointer flex items-center gap-1 shadow-md active:scale-95 transition-all mr-1.5"
+                title="Install App"
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Add to Phone</span>
+              </button>
+            )}
             <a 
               href="https://github.com/aloksk1234-jpg" 
               target="_blank" 
@@ -204,7 +265,58 @@ function App() {
         ))}
       </div>
       <DonationPopup />
-      <PWAInstallPrompt />
+
+      {/* iOS Guided Instruction Bottom Sheet Modal */}
+      {showIOSGuide && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs animate-fade-in">
+          {/* Backdrop click dismiss */}
+          <div className="absolute inset-0" onClick={() => setShowIOSGuide(false)} />
+          
+          <div className="relative z-10 w-full bg-neutral-900 border-t border-neutral-800 rounded-t-3xl p-6 shadow-2xl flex flex-col gap-4 animate-slide-up max-w-md pb-8">
+            <button 
+              onClick={() => setShowIOSGuide(false)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-white bg-neutral-800 p-1.5 rounded-full cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                <img src="/logo.png" alt="Cinememe Logo" className="w-8 h-8 object-contain" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-zinc-100">Install Cinememe</h3>
+                <p className="text-xs text-zinc-400 font-semibold">Follow these 2 simple steps to add it to your iPhone:</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3.5 bg-neutral-950/65 rounded-2xl p-4 border border-neutral-800/40">
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-neutral-800 text-zinc-300 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">1</div>
+                <p className="text-xs text-zinc-300 font-medium leading-relaxed">
+                  Tap the <span className="inline-flex items-center text-amber-400 font-extrabold mx-1 gap-1"><Share className="w-3.5 h-3.5" /> Share</span> button in the Safari bottom browser bar.
+                </p>
+              </div>
+
+              <div className="h-px bg-neutral-900" />
+
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-neutral-800 text-zinc-300 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">2</div>
+                <p className="text-xs text-zinc-300 font-medium leading-relaxed">
+                  Scroll down the share list and select <span className="inline-flex items-center text-amber-400 font-extrabold mx-1 gap-1"><PlusSquare className="w-3.5 h-3.5" /> Add to Home Screen</span>.
+                </p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setShowIOSGuide(false)}
+              className="w-full bg-neutral-800 hover:bg-neutral-750 text-zinc-200 font-bold text-xs py-3 rounded-xl cursor-pointer transition-all active:scale-98"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
