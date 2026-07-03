@@ -30,10 +30,6 @@ def create_watermark_image(text="cinememe.vercel.app"):
     if font is None:
         font = ImageFont.load_default()
         
-    # Draw semi-transparent black background box for readability
-    # Box padding: 3px around text
-    draw.rounded_rectangle([0, 0, width, height], radius=6, fill=(0, 0, 0, 85)) # 85/255 = 33% opacity black
-    
     # Get text size using textbbox to center it
     try:
         bbox = draw.textbbox((0, 0), text, font=font)
@@ -45,8 +41,8 @@ def create_watermark_image(text="cinememe.vercel.app"):
     text_x = (width - text_w) // 2
     text_y = (height - text_h) // 2 - 1
     
-    # Draw semi-transparent white text (60% opacity)
-    draw.text((text_x, text_y), text, font=font, fill=(255, 255, 255, 160))
+    # Draw semi-transparent white text (70% opacity) with a thin black outline (70% opacity)
+    draw.text((text_x, text_y), text, font=font, fill=(255, 255, 255, 180), stroke_width=1, stroke_fill=(0, 0, 0, 180))
     
     # Save the temporary watermark image
     watermark_path = "watermark_temp.png"
