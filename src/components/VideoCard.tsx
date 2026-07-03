@@ -231,21 +231,21 @@ export const VideoCard: React.FC<VideoCardProps> = ({
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: title,
-          text: `Check out this meme from "${movieName}": "${title}"`
+          title: "Cinememe",
+          text: "Check out this meme from - https://cinememe.vercel.app/"
         });
         showToast("Shared successfully!", "success");
       } else {
         // Fallback for Desktop or unsupported devices: share link instead of file
         if (navigator.share) {
           await navigator.share({
-            title: title,
-            text: `Check out this meme from "${movieName}": "${title}"\n${videoUrl}`
+            title: "Cinememe",
+            text: "Check out this meme from - https://cinememe.vercel.app/"
           });
           showToast("Shared via link successfully!", "success");
         } else {
-          await navigator.clipboard.writeText(videoUrl);
-          showToast("Meme link copied to clipboard!", "success");
+          await navigator.clipboard.writeText("https://cinememe.vercel.app/");
+          showToast("Website link copied to clipboard!", "success");
         }
       }
     } catch (error) {
@@ -255,13 +255,13 @@ export const VideoCard: React.FC<VideoCardProps> = ({
       try {
         if (navigator.share) {
           await navigator.share({
-            title: title,
-            text: `Check out this meme from "${movieName}": "${title}"\n${videoUrl}`
+            title: "Cinememe",
+            text: "Check out this meme from - https://cinememe.vercel.app/"
           });
           showToast("Shared via link successfully!", "success");
         } else {
-          await navigator.clipboard.writeText(videoUrl);
-          showToast("Meme link copied to clipboard!", "success");
+          await navigator.clipboard.writeText("https://cinememe.vercel.app/");
+          showToast("Website link copied to clipboard!", "success");
         }
       } catch (err) {
         console.error("Link sharing fallback failed:", err);
