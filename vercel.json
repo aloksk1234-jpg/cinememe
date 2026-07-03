@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/r2/:path*",
+      "destination": "https://pub-fed721a1f3e744b88927e20d43934fae.r2.dev/:path*"
+    }
+  ]
+}
