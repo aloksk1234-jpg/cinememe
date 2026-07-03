@@ -309,9 +309,10 @@ export const VideoCard: React.FC<VideoCardProps> = ({
       >
         <video
           ref={videoRef}
-          src={`${videoUrl}#t=0.1`}
+          src={videoUrl}
+          poster={`/thumbnails/${meme.originalIndex}.jpg`}
           className={`w-full h-full ${layoutMode === 'landscape' ? 'object-contain bg-neutral-950' : 'object-cover'} ${layoutMode === 'feed' ? 'max-h-full' : ''}`}
-          preload={layoutMode === 'landscape' ? 'auto' : 'metadata'}
+          preload={layoutMode === 'landscape' ? 'auto' : 'none'}
           loop
           playsInline
           muted={isMuted}

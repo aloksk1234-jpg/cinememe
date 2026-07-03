@@ -25,7 +25,5 @@ dist-ssr
 
 # Local media / dev assets
 downloaded_videos/
-thumbnails/
-*.jpg
 *.py
 
