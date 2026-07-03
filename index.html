@@ -32,6 +32,22 @@
     <meta property="twitter:title" content="Cinememe - Malayalam Cinema Video Memes & Trolls" />
     <meta property="twitter:description" content="Curated gallery of premium Malayalam cinema video memes and trolls. Play, share on WhatsApp, and download high-quality comedy clips instantly!" />
     <meta property="twitter:image" content="https://cinememe.vercel.app/og-image.png" />
+    
+    <!-- PWA configuration -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Cinememe" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.error('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

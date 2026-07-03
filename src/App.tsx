@@ -3,6 +3,7 @@ import { Search, CheckCircle2, AlertCircle, Info, Heart } from 'lucide-react';
 import { mockMemes } from './data/memes';
 import { VideoGrid } from './components/VideoGrid';
 import DonationPopup from './components/DonationPopup';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 
 interface Toast {
   id: string;
@@ -203,6 +204,7 @@ function App() {
         ))}
       </div>
       <DonationPopup />
+      <PWAInstallPrompt />
     </div>
   );
 }
