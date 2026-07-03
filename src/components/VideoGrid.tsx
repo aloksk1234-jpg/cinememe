@@ -50,7 +50,7 @@ export const VideoGrid: React.FC<VideoGridProps> = ({
   }, [memes]); // Reset observer if list is filtered
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-6 w-full max-w-6xl mx-auto no-scrollbar">
+    <div className="flex-1 overflow-y-auto px-4 py-6 w-full max-w-7xl mx-auto no-scrollbar">
       {memes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-zinc-500 bg-neutral-900/20 rounded-2xl border border-neutral-800/40">
           <Sparkles className="w-12 h-12 mb-4 text-amber-500/30 animate-pulse" />
