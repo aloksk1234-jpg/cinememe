@@ -278,13 +278,22 @@ export const VideoCard: React.FC<VideoCardProps> = ({
   const handleMouseEnter = () => {
     if (layoutMode === 'grid' && videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+      videoRef.current.play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          console.warn("Autoplay on hover blocked by browser:", err);
+          if (videoRef.current) {
+            videoRef.current.load(); // Reset video element to restore poster
+          }
+          setIsPlaying(false);
+        });
     }
   };
 
   const handleMouseLeave = () => {
     if (layoutMode === 'grid' && videoRef.current) {
       videoRef.current.pause();
+      videoRef.current.load(); // Reset video element to restore poster
       setIsPlaying(false);
       setVideoProgress(0);
     }
@@ -314,7 +323,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
           src={videoUrl}
           poster={`/thumbnails/${meme.originalIndex}.jpg`}
           className={`w-full h-full ${layoutMode === 'landscape' ? 'object-contain bg-neutral-950' : 'object-cover'} ${layoutMode === 'feed' ? 'max-h-full' : ''}`}
-          preload={layoutMode === 'landscape' ? 'auto' : 'none'}
+          preload={layoutMode === 'landscape' ? 'auto' : 'metadata'}
           loop
           playsInline
           muted={isMuted}
@@ -325,9 +334,18 @@ export const VideoCard: React.FC<VideoCardProps> = ({
           onPlaying={() => setIsBuffering(false)}
         />
 
+        {/* Keep poster visible as an overlay while the video is playing but still loading/buffering */}
+        {isPlaying && isBuffering && (
+          <img 
+            src={`/thumbnails/${meme.originalIndex}.jpg`}
+            alt="" 
+            className={`absolute inset-0 w-full h-full z-0 pointer-events-none filter blur-[1px] opacity-75 ${layoutMode === 'landscape' ? 'object-contain' : 'object-cover'}`}
+          />
+        )}
+
         {/* Buffering/Loading Indicator */}
         {isPlaying && isBuffering && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs z-10">
             <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
           </div>
         )}
