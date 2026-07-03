@@ -18,7 +18,7 @@ export interface VideoMeme {
 // 1. Set USE_R2 to true once you upload the videos to your R2 bucket.
 // 2. Put your public R2 bucket domain or custom subdomain in R2_BUCKET_BASE_URL.
 export const USE_R2 = true; 
-export const R2_BUCKET_BASE_URL = "/api/r2/downloaded_videos";
+export const R2_BUCKET_BASE_URL = "/api/r2/watermarked_videos";
 
 const gdriveFiles = [
   { id: "1bHHhFOirD-7aOM1wJOg1JWpRxafuTiYk", name: "VID_20260701_022913_990.mp4" },
