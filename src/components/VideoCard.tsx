@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Download, Share2, Volume2, VolumeX, Heart, Edit3 } from 'lucide-react';
+import { Play, Pause, Download, Share2, Volume2, VolumeX, Heart } from 'lucide-react';
 import type { VideoMeme } from '../data/memes';
 import { EditMetadataModal } from './EditMetadataModal';
 
