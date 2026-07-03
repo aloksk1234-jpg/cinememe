@@ -309,7 +309,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
       >
         <video
           ref={videoRef}
-          src={videoUrl}
+          src={`${videoUrl}#t=0.1`}
           className={`w-full h-full ${layoutMode === 'landscape' ? 'object-contain bg-neutral-950' : 'object-cover'} ${layoutMode === 'feed' ? 'max-h-full' : ''}`}
           preload={layoutMode === 'landscape' ? 'auto' : 'metadata'}
           loop
