@@ -234,7 +234,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         await navigator.share({
           files: [file],
           title: "Cinememe",
-          text: `Check out this meme from - https://cinememe.vercel.app/?meme=${meme.id}`
+          text: "Check out this meme from - https://cinememe.vercel.app/"
         });
         showToast("Shared successfully!", "success");
       } else {
@@ -242,12 +242,12 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         if (navigator.share) {
           await navigator.share({
             title: "Cinememe",
-            text: `Check out this meme from - https://cinememe.vercel.app/?meme=${meme.id}`
+            text: "Check out this meme from - https://cinememe.vercel.app/"
           });
           showToast("Shared via link successfully!", "success");
         } else {
-          await navigator.clipboard.writeText(`https://cinememe.vercel.app/?meme=${meme.id}`);
-          showToast("Meme link copied to clipboard!", "success");
+          await navigator.clipboard.writeText("https://cinememe.vercel.app/");
+          showToast("Website link copied to clipboard!", "success");
         }
       }
     } catch (error) {
@@ -258,12 +258,12 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         if (navigator.share) {
           await navigator.share({
             title: "Cinememe",
-            text: `Check out this meme from - https://cinememe.vercel.app/?meme=${meme.id}`
+            text: "Check out this meme from - https://cinememe.vercel.app/"
           });
           showToast("Shared via link successfully!", "success");
         } else {
-          await navigator.clipboard.writeText(`https://cinememe.vercel.app/?meme=${meme.id}`);
-          showToast("Meme link copied to clipboard!", "success");
+          await navigator.clipboard.writeText("https://cinememe.vercel.app/");
+          showToast("Website link copied to clipboard!", "success");
         }
       } catch (err) {
         console.error("Link sharing fallback failed:", err);
