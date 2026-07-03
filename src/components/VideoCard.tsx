@@ -63,10 +63,12 @@ export const VideoCard: React.FC<VideoCardProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastTapRef = useRef<number>(0);
 
-  // Sync active state from Feed
+  // Sync active state from Feed or Mobile Scroll Focus
   useEffect(() => {
-    if ((layoutMode === 'feed' || layoutMode === 'landscape') && videoRef.current) {
-      if (isActive) {
+    if (videoRef.current) {
+      const shouldPlay = (layoutMode === 'feed' || layoutMode === 'landscape' || (layoutMode === 'grid' && isActive));
+      
+      if (shouldPlay) {
         const playPromise = videoRef.current.play();
         if (playPromise !== undefined) {
           playPromise

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VideoCard } from './VideoCard';
 import type { VideoMeme } from '../data/memes';
 import { X, Sparkles } from 'lucide-react';
@@ -17,6 +17,37 @@ export const VideoGrid: React.FC<VideoGridProps> = ({
   showToast
 }) => {
   const [selectedMeme, setSelectedMeme] = useState<VideoMeme | null>(null);
+  const [activeMemeId, setActiveMemeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only run scroll autoplay on mobile/tablet viewports (< 768px)
+    if (window.innerWidth >= 768) return;
+
+    const cards = document.querySelectorAll('.meme-grid-card');
+    if (cards.length === 0) return;
+
+    const observerOptions = {
+      root: null, // Viewport boundary
+      rootMargin: '-30% 0px -30% 0px', // Focus region: middle 40% of the screen
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('data-meme-id');
+          setActiveMemeId(id);
+        }
+      });
+    }, observerOptions);
+
+    cards.forEach(card => observer.observe(card));
+
+    return () => {
+      cards.forEach(card => observer.unobserve(card));
+      observer.disconnect();
+    };
+  }, [memes]); // Reset observer if list is filtered
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-6 w-full max-w-6xl mx-auto no-scrollbar">
@@ -33,12 +64,13 @@ export const VideoGrid: React.FC<VideoGridProps> = ({
           {memes.map((meme) => (
             <div 
               key={meme.id} 
-              className="break-inside-avoid block cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+              className="meme-grid-card break-inside-avoid block cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+              data-meme-id={meme.id}
               onClick={() => setSelectedMeme(meme)}
             >
               <VideoCard
                 meme={meme}
-                isActive={false} // Muted autoplay on hover is handled within VideoCard
+                isActive={selectedMeme === null && meme.id === activeMemeId}
                 isMuted={isMuted}
                 onToggleMute={onToggleMute}
                 showToast={showToast}
