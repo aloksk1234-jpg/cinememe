@@ -66,6 +66,11 @@ export default defineConfig({
         target: 'https://drive.usercontent.google.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/gdrive/, '/download'),
+      },
+      '/api/r2': {
+        target: 'https://pub-fed721a1f3e744b88927e20d43934fae.r2.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/r2/, ''),
       }
     }
   }
