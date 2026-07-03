@@ -413,7 +413,11 @@ export const VideoCard: React.FC<VideoCardProps> = ({
       </div>
 
       {/* Info & Action Bar below video (mainly for Grid, or structured info) */}
-      <div className={`p-4 flex flex-col justify-between flex-shrink-0 ${layoutMode === 'feed' ? 'bg-neutral-900 border-t border-neutral-800/80' : 'flex-1 bg-neutral-900/60'}`}>
+      <div className={`p-4 flex flex-col justify-between ${
+        layoutMode === 'feed' 
+          ? 'bg-neutral-900 border-t border-neutral-800/80 flex-shrink-0' 
+          : 'bg-neutral-900/60 w-full'
+      }`}>
         {/* Title for Grid/Landscape View */}
         {(layoutMode === 'grid' || layoutMode === 'landscape') && (
           <div className="text-left mb-3">
