@@ -19,6 +19,30 @@ export const VideoGrid: React.FC<VideoGridProps> = ({
   const [selectedMeme, setSelectedMeme] = useState<VideoMeme | null>(null);
   const [activeMemeId, setActiveMemeId] = useState<string | null>(null);
 
+  // Handle URL deep linking on mount or search filter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const memeId = params.get('meme');
+    if (memeId) {
+      const found = memes.find(m => m.id === memeId);
+      if (found) {
+        setSelectedMeme(found);
+      }
+    }
+  }, [memes]);
+
+  // Update URL query parameter when selectedMeme changes
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (selectedMeme) {
+      url.searchParams.set('meme', selectedMeme.id);
+    } else {
+      url.searchParams.delete('meme');
+    }
+    // Update address bar without triggering a page reload
+    window.history.replaceState({}, '', url.pathname + url.search);
+  }, [selectedMeme]);
+
   useEffect(() => {
     // Only run scroll autoplay on mobile/tablet viewports (< 768px)
     if (window.innerWidth >= 768) return;
