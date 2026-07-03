@@ -30,6 +30,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
   const [showControlOverlay, setShowControlOverlay] = useState<'play' | 'pause' | null>(null);
   const [isBuffering, setIsBuffering] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleSaveMetadata = async (updated: Partial<VideoMeme>) => {
     try {
@@ -318,11 +319,21 @@ export const VideoCard: React.FC<VideoCardProps> = ({
         }`}
         onClick={handleDoubleTap}
       >
+        {/* Permanent background image underlay to prevent black boxes on loading/errors */}
+        <img 
+          src={`/thumbnails/${meme.originalIndex}.jpg`}
+          alt="" 
+          className={`absolute inset-0 w-full h-full z-0 pointer-events-none transition-opacity duration-300 ${
+            layoutMode === 'landscape' ? 'object-contain' : 'object-cover'
+          }`}
+        />
+
         <video
           ref={videoRef}
           src={videoUrl}
-          poster={`/thumbnails/${meme.originalIndex}.jpg`}
-          className={`w-full h-full ${layoutMode === 'landscape' ? 'object-contain bg-neutral-950' : 'object-cover'} ${layoutMode === 'feed' ? 'max-h-full' : ''}`}
+          className={`w-full h-full z-10 relative transition-opacity duration-300 ${
+            isPlaying && !isBuffering && !hasError ? 'opacity-100' : 'opacity-0'
+          } ${layoutMode === 'landscape' ? 'object-contain bg-neutral-950' : 'object-cover'} ${layoutMode === 'feed' ? 'max-h-full' : ''}`}
           preload={layoutMode === 'landscape' ? 'auto' : 'metadata'}
           loop
           playsInline
@@ -331,21 +342,20 @@ export const VideoCard: React.FC<VideoCardProps> = ({
           onLoadStart={() => setIsBuffering(true)}
           onCanPlay={() => setIsBuffering(false)}
           onWaiting={() => setIsBuffering(true)}
-          onPlaying={() => setIsBuffering(false)}
+          onPlaying={() => {
+            setIsBuffering(false);
+            setHasError(false);
+          }}
+          onError={() => {
+            console.error("Video load failed:", videoUrl);
+            setHasError(true);
+            setIsBuffering(false);
+          }}
         />
-
-        {/* Keep poster visible as an overlay while the video is playing but still loading/buffering */}
-        {isPlaying && isBuffering && (
-          <img 
-            src={`/thumbnails/${meme.originalIndex}.jpg`}
-            alt="" 
-            className={`absolute inset-0 w-full h-full z-0 pointer-events-none filter blur-[1px] opacity-75 ${layoutMode === 'landscape' ? 'object-contain' : 'object-cover'}`}
-          />
-        )}
 
         {/* Buffering/Loading Indicator */}
         {isPlaying && isBuffering && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs z-20">
             <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
           </div>
         )}
